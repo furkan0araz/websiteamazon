@@ -1,71 +1,59 @@
-"use client"
+'use client'
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Eye, EyeOff, Mail, Lock, User, ShoppingBag, TrendingUp, Gift, LogIn } from 'lucide-react'
-import toast, { Toaster } from 'react-hot-toast'
+import { LogIn, User, Mail, Lock, Eye, EyeOff, Gift, Shield, Zap, ArrowRight } from 'lucide-react'
+import { Toaster, toast } from 'react-hot-toast'
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
-  const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!email || !password || (!isLogin && !name)) {
-      toast.error('Lütfen tüm alanları doldurun!')
+    if (!email || !password) {
+      toast.error('Lütfen tüm alanları doldurun')
       return
     }
 
-    toast.loading(isLogin ? 'Giriş yapılıyor...' : 'Kayıt oluşturuluyor...', { id: 'auth' })
-    
-    // Simulate API call
-    setTimeout(() => {
-      if (isLogin) {
-        toast.success('Giriş başarılı! Dashboard\'a yönlendiriliyorsunuz...', { id: 'auth' })
-        setTimeout(() => {
-          window.location.href = '/dashboard'
-        }, 1500)
-      } else {
-        toast.success('Kayıt başarılı! Giriş yapabilirsiniz...', { id: 'auth' })
-        setIsLogin(true)
-        setName('')
-      }
-    }, 2000)
-  }
-
-  const handleGoogleLogin = () => {
-    toast.loading('Google ile giriş yapılıyor...')
-    // Simulate Google OAuth
-    setTimeout(() => {
-      toast.success('Google ile giriş başarılı!')
+    if (isLogin) {
+      toast.success('Giriş başarılı! Dashboard\'a yönlendiriliyorsunuz...')
       setTimeout(() => {
         window.location.href = '/dashboard'
       }, 1500)
+    } else {
+      toast.success('Hesap başarıyla oluşturuldu! Giriş yapabilirsiniz.')
+      setIsLogin(true)
+    }
+  }
+
+  const handleGoogleLogin = () => {
+    toast.loading('Google ile giriş yapılıyor...', { id: 'google' })
+    setTimeout(() => {
+      toast.success('Google ile giriş başarılı!', { id: 'google' })
+      setTimeout(() => {
+        window.location.href = '/dashboard'
+      }, 1000)
     }, 2000)
   }
 
   const handleForgotPassword = () => {
-    if (!email) {
-      toast.error('Lütfen önce e-posta adresinizi girin!')
-      return
-    }
-    toast.success('Şifre sıfırlama linki e-posta adresinize gönderildi!')
+    toast.info('Şifre sıfırlama linki e-posta adresinize gönderildi.')
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-neon-pink/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-neon-green/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-green-500/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
       </div>
 
       <div className="flex flex-col lg:flex-row items-center justify-center gap-12 relative z-10 w-full max-w-6xl">
@@ -74,121 +62,97 @@ export default function LoginPage() {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex-1 text-center lg:text-left"
+          className="text-center lg:text-left lg:w-1/2"
         >
           <div className="mb-8">
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-6xl lg:text-7xl font-bold gradient-text mb-4"
-            >
-              AmazonBonus
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-xl text-muted-foreground"
-            >
-              Amazon alışverişlerinden bonus kazan!
-            </motion.p>
+            <h1 className="text-5xl lg:text-6xl font-bold mb-4">
+              <span className="gradient-text">AmazonBonus</span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-6">
+              Amazon alışverişlerinizden bonus kazanın, 
+              <br className="hidden lg:block" />
+              kazancınızı takip edin!
+            </p>
           </div>
 
           {/* Features */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8"
-          >
-            <div className="glass rounded-xl p-6 text-center border border-primary/20 hover:border-primary/40 transition-all">
-              <ShoppingBag className="w-8 h-8 text-primary-400 mx-auto mb-3" />
-              <h3 className="font-semibold text-foreground mb-2">Sipariş Takibi</h3>
-              <p className="text-sm text-muted-foreground">Amazon siparişlerinizi kolayca takip edin</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="glass rounded-xl p-6 text-center border border-orange-200 hover:border-orange-300 transition-all">
+              <Gift className="w-8 h-8 text-orange-500 mx-auto mb-3" />
+              <h3 className="font-semibold text-gray-800 mb-2">Ödüller</h3>
+              <p className="text-sm text-gray-600">Her alışverişten %3'e kadar bonus</p>
             </div>
-            <div className="glass rounded-xl p-6 text-center border border-accent-green/20 hover:border-accent-green/40 transition-all">
-              <TrendingUp className="w-8 h-8 text-accent-green mx-auto mb-3" />
-              <h3 className="font-semibold text-foreground mb-2">Bonus Kazan</h3>
-              <p className="text-sm text-muted-foreground">Her alışverişten %3'e kadar bonus</p>
+            
+            <div className="glass rounded-xl p-6 text-center border border-orange-200 hover:border-orange-300 transition-all">
+              <Shield className="w-8 h-8 text-orange-500 mx-auto mb-3" />
+              <h3 className="font-semibold text-gray-800 mb-2">Güvenli</h3>
+              <p className="text-sm text-gray-600">SSL şifreli güvenli bağlantı</p>
             </div>
-            <div className="glass rounded-xl p-6 text-center border border-accent-pink/20 hover:border-accent-pink/40 transition-all">
-              <Gift className="w-8 h-8 text-accent-pink mx-auto mb-3" />
-              <h3 className="font-semibold text-foreground mb-2">Ödüller</h3>
-              <p className="text-sm text-muted-foreground">Bonuslarınızı hediye çekine çevirin</p>
+            
+            <div className="glass rounded-xl p-6 text-center border border-orange-200 hover:border-orange-300 transition-all">
+              <Zap className="w-8 h-8 text-orange-500 mx-auto mb-3" />
+              <h3 className="font-semibold text-gray-800 mb-2">Hızlı</h3>
+              <p className="text-sm text-gray-600">Anında bonus hesaplama</p>
             </div>
-          </motion.div>
+            
+            <div className="glass rounded-xl p-6 text-center border border-orange-200 hover:border-orange-300 transition-all">
+              <ArrowRight className="w-8 h-8 text-orange-500 mx-auto mb-3" />
+              <h3 className="font-semibold text-gray-800 mb-2">Kolay</h3>
+              <p className="text-sm text-gray-600">Basit ve kullanıcı dostu</p>
+            </div>
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="text-center lg:text-left"
-          >
-          </motion.div>
+          <div className="text-sm text-gray-500">
+            <p>✓ 50,000+ mutlu kullanıcı</p>
+            <p>✓ 1,000,000+ TL bonus dağıtıldı</p>
+            <p>✓ 7/24 canlı destek</p>
+          </div>
         </motion.div>
 
         {/* Right side - Login Form */}
         <motion.div 
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className="w-full max-w-md"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="w-full lg:w-1/2 max-w-md"
         >
-          <Card className="shadow-2xl border-primary/30">
+          <Card className="glass border-orange-200 shadow-xl">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">
-                {isLogin ? 'Giriş Yap' : 'Kayıt Ol'}
+              <CardTitle className="text-2xl font-bold text-gray-800">
+                {isLogin ? 'Hoş Geldiniz' : 'Hesap Oluştur'}
               </CardTitle>
-              <CardDescription>
-                {isLogin 
-                  ? 'AmazonBonus hesabınıza erişmek için lütfen bilgilerinizi girin.'
-                  : 'AmazonBonus hesabı oluşturun ve bonus kazanmaya başlayın.'
-                }
+              <CardDescription className="text-gray-600">
+                {isLogin ? 'Hesabınıza giriş yapın' : 'Yeni hesap oluşturun'}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                {!isLogin && (
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="text"
-                      placeholder="Ad Soyad"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                )}
-                
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     type="email"
                     placeholder="E-posta adresiniz"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
                     required
                   />
                 </div>
 
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Şifreniz"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -197,12 +161,12 @@ export default function LoginPage() {
                 {isLogin && (
                   <div className="flex items-center justify-between text-sm">
                     <label className="flex items-center space-x-2">
-                      <input type="checkbox" className="rounded border-primary/30" />
-                      <span className="text-muted-foreground">Beni Hatırla</span>
+                      <input type="checkbox" className="rounded border-orange-300" />
+                      <span className="text-gray-600">Beni Hatırla</span>
                     </label>
                     <button 
                       type="button" 
-                      className="text-primary-400 hover:text-primary-300 transition-colors"
+                      className="text-orange-600 hover:text-orange-700 transition-colors"
                       onClick={handleForgotPassword}
                     >
                       Şifreni mi unuttun?
@@ -212,7 +176,7 @@ export default function LoginPage() {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-medium"
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   {isLogin ? 'Oturum Aç' : 'Hesap Oluştur'}
@@ -220,16 +184,16 @@ export default function LoginPage() {
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-primary/20" />
+                    <span className="w-full border-t border-gray-200" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-dark-800 px-2 text-muted-foreground">veya</span>
+                    <span className="bg-white px-2 text-gray-500">veya</span>
                   </div>
                 </div>
 
                 <Button 
                   variant="outline" 
-                  className="w-full border-primary/30 hover:bg-primary/5 hover:border-primary/50"
+                  className="w-full border-gray-200 hover:bg-gray-50 hover:border-orange-300"
                   onClick={handleGoogleLogin}
                 >
                   <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
@@ -243,11 +207,11 @@ export default function LoginPage() {
               </form>
 
               <div className="mt-6 text-center">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-600">
                   {isLogin ? "Hesabınız yok mu?" : "Zaten hesabınız var mı?"}
                   <button
                     onClick={() => setIsLogin(!isLogin)}
-                    className="ml-1 text-primary-400 hover:text-primary-300 font-medium transition-colors"
+                    className="ml-1 text-orange-600 hover:text-orange-700 font-medium transition-colors"
                   >
                     {isLogin ? "Kayıt Ol" : "Giriş Yap"}
                   </button>
@@ -261,15 +225,15 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1 }}
-            className="mt-6 text-center text-xs text-muted-foreground"
+            className="mt-6 text-center text-xs text-gray-500"
           >
             <p className="mb-2">🔒 Güvenli ve şifreli bağlantı</p>
             <p>Copyright © 2025 AmazonBonus. Tüm hakları saklıdır.</p>
             <div className="flex justify-center space-x-4 mt-2">
-              <a href="#" className="hover:text-primary-400">Gizlilik Politikası</a>
-              <a href="#" className="hover:text-primary-400">Kullanım Sözleşmesi</a>
-              <a href="#" className="hover:text-primary-400">S.S.S</a>
-              <a href="#" className="hover:text-primary-400">İletişim</a>
+              <a href="#" className="hover:text-orange-600">Gizlilik Politikası</a>
+              <a href="#" className="hover:text-orange-600">Kullanım Sözleşmesi</a>
+              <a href="#" className="hover:text-orange-600">S.S.S</a>
+              <a href="#" className="hover:text-orange-600">İletişim</a>
             </div>
           </motion.div>
         </motion.div>
@@ -281,22 +245,22 @@ export default function LoginPage() {
         toastOptions={{
           duration: 3000,
           style: {
-            background: 'rgba(26, 26, 46, 0.95)',
-            color: '#f9fafb',
-            border: '1px solid rgba(168, 85, 247, 0.3)',
+            background: 'rgba(255, 255, 255, 0.95)',
+            color: '#374151',
+            border: '1px solid rgba(249, 115, 22, 0.3)',
             borderRadius: '8px',
             backdropFilter: 'blur(10px)',
           },
           success: {
             iconTheme: {
               primary: '#059669',
-              secondary: '#f9fafb',
+              secondary: '#ffffff',
             },
           },
           error: {
             iconTheme: {
               primary: '#dc2626',
-              secondary: '#f9fafb',
+              secondary: '#ffffff',
             },
           },
         }}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -36,10 +37,19 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function Dashboard() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState('dashboard')
   const [chartType, setChartType] = useState<'line' | 'bar' | 'area'>('area')
   const [isUpdating, setIsUpdating] = useState(false)
   const [selectedDateRange, setSelectedDateRange] = useState('1 Haz 2025 - 31 Tem 2025')
+  
+  // Orders filters state
+  const [orderFilters, setOrderFilters] = useState({
+    status: 'Tümü',
+    email: '',
+    dateRange: 'Son 30 gün',
+    pageSize: '10'
+  })
 
   // Mock data
   const stats = {
@@ -181,16 +191,9 @@ export default function Dashboard() {
   }
 
   // Orders data and filters
-  const [orderFilters, setOrderFilters] = useState({
-    status: 'Tüm Durumlar',
-    email: '',
-    dateRange: 'Tüm Zamanlar',
-    pageSize: '10 Adet'
-  })
-
-  const orderStatuses = ['Tüm Durumlar', 'Bekliyor', 'Kargoda', 'Teslim Edildi', 'İptal Edildi']
-  const dateRanges = ['Tüm Zamanlar', 'Son 7 Gün', 'Son 30 Gün', 'Son 3 Ay']
-  const pageSizes = ['10 Adet', '25 Adet', '50 Adet', '100 Adet']
+  const orderStatuses = ['Tümü', 'Bekliyor', 'Kargoda', 'Teslim Edildi', 'İptal Edildi']
+  const dateRanges = ['Son 30 gün', 'Son 7 gün', 'Son 3 ay', 'Tüm zamanlar']
+  const pageSizes = ['10', '25', '50', '100']
 
   const ordersData = [
     // Mock data - şu an boş
@@ -233,14 +236,14 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-dark-700">
+    <div className="min-h-screen bg-gradient-to-br from-white via-orange-50 to-orange-100">
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 glass border-r border-primary/20 z-50">
+      <div className="fixed inset-y-0 left-0 w-64 glass border-r border-orange-200 z-50">
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-primary/20">
-            <h1 className="text-2xl font-bold text-blue-400">AmazonBonus</h1>
-            <p className="text-sm text-muted-foreground mt-1">Kontrol Paneli</p>
+          <div className="p-6 border-b border-orange-200">
+            <h1 className="text-2xl font-bold text-orange-600">AmazonBonus</h1>
+            <p className="text-sm text-gray-600 mt-1">Kontrol Paneli</p>
           </div>
 
           {/* Navigation */}
@@ -259,8 +262,8 @@ export default function Dashboard() {
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all ${
                     activeTab === item.id
-                      ? 'bg-primary/20 text-primary-300 neon-glow'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
+                      ? 'bg-orange-100 text-orange-700 border-r-2 border-orange-500'
+                      : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -271,14 +274,14 @@ export default function Dashboard() {
           </nav>
 
           {/* User Profile */}
-          <div className="p-4 border-t border-primary/20">
+          <div className="p-4 border-t border-orange-200">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary-500 to-neon-pink flex items-center justify-center">
+                                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary-500 to-orange-500 flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="font-medium text-foreground">araz0723@gmail.com</p>
-                <p className="text-xs text-muted-foreground">Bonus Seviyesi {stats.bonusLevel}</p>
+                <p className="font-medium text-gray-800">araz0723@gmail.com</p>
+                <p className="text-xs text-gray-600">Bonus Seviyesi {stats.bonusLevel}</p>
               </div>
             </div>
             <Button 
@@ -296,16 +299,16 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="ml-64">
         {/* Header */}
-        <header className="glass border-b border-primary/20 p-6">
+        <header className="glass border-b border-orange-200 p-6">
           <div className="flex items-center justify-between">
             <div>
               {/* Breadcrumb */}
-              <div className="flex items-center text-sm text-muted-foreground mb-2">
+              <div className="flex items-center text-sm text-gray-600 mb-2">
                 <span>Kontrol Paneli</span>
                 {activeTab !== 'dashboard' && (
                   <>
                     <ChevronRight className="w-4 h-4 mx-2" />
-                    <span className="text-primary-400 capitalize">
+                    <span className="text-orange-600 capitalize">
                       {activeTab === 'payments' ? 'Ödemeler' : 
                        activeTab === 'orders' ? 'Siparişler' : 
                        activeTab === 'profile' ? 'Profil' : 'Ayarlar'}
@@ -313,13 +316,13 @@ export default function Dashboard() {
                   </>
                 )}
               </div>
-              <h2 className="text-2xl font-bold text-foreground">
+              <h2 className="text-2xl font-bold text-gray-800">
                 {activeTab === 'dashboard' ? 'Kontrol Paneli' :
                  activeTab === 'payments' ? 'Ödemeler' :
                  activeTab === 'orders' ? 'Siparişler' :
                  activeTab === 'profile' ? 'Profil' : 'Ayarlar'}
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-gray-600">
                 {activeTab === 'dashboard' ? 'Amazon siparişlerinizi takip edin ve bonuslarınızı görün' :
                  activeTab === 'payments' ? 'Ödeme geçmişinizi görüntüleyin ve ödeme yöntemlerinizi yönetin' :
                  activeTab === 'orders' ? 'Amazon siparişlerinizi yönetin ve durumlarını takip edin' :
@@ -345,12 +348,12 @@ export default function Dashboard() {
               <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 rounded-lg bg-gradient-to-r from-neon-green/20 to-primary/20 border border-neon-green/30"
+                              className="mb-6 p-4 rounded-lg bg-gradient-to-r from-green-500/20 to-primary/20 border border-green-500/30"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-full bg-neon-green/20 flex items-center justify-center">
-                  <Gift className="w-4 h-4 text-neon-green" />
+                                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <Gift className="w-4 h-4 text-green-500" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">
@@ -403,7 +406,7 @@ export default function Dashboard() {
                     <CardTitle className="text-sm font-medium text-muted-foreground">
                       BU DÖNEM TESLİMAT SAYISI
                     </CardTitle>
-                    <TrendingUp className="w-4 h-4 text-neon-green" />
+                                                <TrendingUp className="w-4 h-4 text-green-500" />
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -426,7 +429,7 @@ export default function Dashboard() {
                     <CardTitle className="text-sm font-medium text-muted-foreground">
                       BU DÖNEM TAHMİNİ KAZANÇ
                     </CardTitle>
-                    <DollarSign className="w-4 h-4 text-neon-yellow" />
+                                                <DollarSign className="w-4 h-4 text-yellow-500" />
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -484,8 +487,8 @@ export default function Dashboard() {
                       <AreaChart data={chartData}>
                         <defs>
                           <linearGradient id="colorKazanc" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor="#a855f7" stopOpacity={0.1}/>
+                            <stop offset="5%" stopColor="#f97316" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#f97316" stopOpacity={0.1}/>
                           </linearGradient>
                           <linearGradient id="colorSiparisler" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#059669" stopOpacity={0.8}/>
@@ -498,7 +501,7 @@ export default function Dashboard() {
                         <Tooltip 
                           contentStyle={{ 
                             backgroundColor: 'rgba(26, 26, 46, 0.95)', 
-                            border: '1px solid rgba(168, 85, 247, 0.3)',
+                            border: '1px solid rgba(249, 115, 22, 0.3)',
                             borderRadius: '8px',
                             color: '#f9fafb'
                           }}
@@ -506,7 +509,7 @@ export default function Dashboard() {
                         <Area 
                           type="monotone" 
                           dataKey="kazanc" 
-                          stroke="#a855f7" 
+                          stroke="#f97316" 
                           fillOpacity={1} 
                           fill="url(#colorKazanc)"
                           strokeWidth={3}
@@ -530,7 +533,7 @@ export default function Dashboard() {
                         <Tooltip 
                           contentStyle={{ 
                             backgroundColor: 'rgba(26, 26, 46, 0.95)', 
-                            border: '1px solid rgba(168, 85, 247, 0.3)',
+                            border: '1px solid rgba(249, 115, 22, 0.3)',
                             borderRadius: '8px',
                             color: '#f9fafb'
                           }}
@@ -538,9 +541,9 @@ export default function Dashboard() {
                         <Line 
                           type="monotone" 
                           dataKey="kazanc" 
-                          stroke="#a855f7" 
+                          stroke="#f97316" 
                           strokeWidth={3}
-                          dot={{ fill: '#a855f7', strokeWidth: 2, r: 6 }}
+                          dot={{ fill: '#f97316', strokeWidth: 2, r: 6 }}
                         />
                         <Line 
                           type="monotone" 
@@ -560,12 +563,12 @@ export default function Dashboard() {
                         <Tooltip 
                           contentStyle={{ 
                             backgroundColor: 'rgba(26, 26, 46, 0.95)', 
-                            border: '1px solid rgba(168, 85, 247, 0.3)',
+                            border: '1px solid rgba(249, 115, 22, 0.3)',
                             borderRadius: '8px',
                             color: '#f9fafb'
                           }}
                         />
-                        <Bar dataKey="kazanc" fill="#a855f7" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="kazanc" fill="#f97316" radius={[4, 4, 0, 0]} />
                         <Bar dataKey="siparisler" fill="#059669" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     )}
@@ -578,24 +581,24 @@ export default function Dashboard() {
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
               <div className="space-y-6">
                 {/* Live Support */}
-                <Card className="glass border-primary/20">
+                <Card className="glass border-orange-200 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-lg text-blue-400 font-semibold flex items-center">
+                    <CardTitle className="text-lg text-orange-600 font-semibold flex items-center">
                       <MessageCircle className="w-5 h-5 mr-2" />
                       CANLI DESTEK
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="text-center">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary-500 to-accent-pink flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
                       <User className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2">Destek Ekibi</h3>
-                    <p className="text-muted-foreground mb-4 text-sm">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Destek Ekibi</h3>
+                    <p className="text-gray-600 mb-4 text-sm">
                       Sorularınız için 7/24 buradayız!
                     </p>
                     <Button 
                       variant="default" 
-                      className="w-full bg-gradient-to-r from-primary-500 to-accent-blue hover:from-primary-600 hover:to-accent-blue/90"
+                      className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium shadow-lg"
                       onClick={handleStartChat}
                     >
                       <MessageCircle className="w-4 h-4 mr-2" />
@@ -605,49 +608,55 @@ export default function Dashboard() {
                 </Card>
 
                 {/* Quick Stats Pie Chart */}
-                <Card className="glass border-primary/20">
+                <Card className="glass border-orange-200 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-sm text-blue-400">SİPARİŞ DURUMU</CardTitle>
+                    <CardTitle className="text-sm text-orange-600">SİPARİŞ DURUMU</CardTitle>
                   </CardHeader>
-                  <CardContent className="h-[200px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={pieData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={40}
-                          outerRadius={80}
-                          paddingAngle={2}
-                          dataKey="value"
-                        >
-                          {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <ResponsiveContainer width="100%" height={150}>
+                          <PieChart>
+                            <Pie
+                              data={pieData}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={30}
+                              outerRadius={60}
+                              paddingAngle={2}
+                              dataKey="value"
+                            >
+                              {pieData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              contentStyle={{ 
+                                backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                                border: '1px solid rgba(249, 115, 22, 0.3)',
+                                borderRadius: '8px',
+                                color: '#374151'
+                              }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="flex-1 ml-6">
+                        <div className="space-y-3">
+                          {pieData.map((item, index) => (
+                            <div key={index} className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                <div 
+                                  className="w-4 h-4 rounded-full flex-shrink-0" 
+                                  style={{ backgroundColor: item.color }}
+                                ></div>
+                                <span className="text-sm text-gray-800">{item.name}</span>
+                              </div>
+                              <span className="text-sm font-semibold text-gray-800">{item.value}</span>
+                            </div>
                           ))}
-                        </Pie>
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: 'rgba(26, 26, 46, 0.95)', 
-                            border: '1px solid rgba(168, 85, 247, 0.3)',
-                            borderRadius: '8px',
-                            color: '#f9fafb'
-                          }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="space-y-3 mt-4">
-                      {pieData.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div 
-                              className="w-4 h-4 rounded-full flex-shrink-0" 
-                              style={{ backgroundColor: item.color }}
-                            ></div>
-                            <span className="text-sm text-foreground">{item.name}</span>
-                          </div>
-                          <span className="text-sm font-semibold text-foreground">{item.value}</span>
                         </div>
-                      ))}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -662,10 +671,10 @@ export default function Dashboard() {
             transition={{ delay: 0.6 }}
             className="mt-8"
           >
-            <Card>
+            <Card className="glass border-orange-200 shadow-lg">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-blue-400">Son Siparişler</CardTitle>
+                  <CardTitle className="text-orange-600">Son Siparişler</CardTitle>
                   <div className="flex items-center space-x-2">
                     <Button 
                       variant="outline" 
@@ -693,27 +702,32 @@ export default function Dashboard() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.7 + index * 0.1 }}
-                      className="flex items-center justify-between p-4 rounded-lg bg-dark-800/30 border border-primary/20"
+                      className="flex items-center justify-between p-4 rounded-lg bg-gray-50 border border-orange-200"
                     >
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-primary-500 to-neon-pink flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center">
                           <Package className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                          <h4 className="font-medium text-foreground">{order.product}</h4>
-                          <p className="text-sm text-muted-foreground">#{order.id} • {order.date}</p>
+                          <h4 className="font-medium text-gray-800">{order.product}</h4>
+                          <button 
+                            onClick={() => router.push(`/orders/${order.id}`)}
+                            className="text-sm text-orange-600 hover:text-orange-700 transition-colors cursor-pointer"
+                          >
+                            #{order.id} • {order.date}
+                          </button>
                         </div>
                       </div>
                       <div className="text-right">
                         <div className="flex items-center space-x-4">
                           <div>
-                            <p className="text-sm font-medium text-foreground">${order.amount}</p>
-                            <p className="text-xs text-neon-green">+${order.bonus} bonus</p>
+                            <p className="text-sm font-medium text-gray-800">${order.amount}</p>
+                            <p className="text-xs text-green-600">+${order.bonus} bonus</p>
                           </div>
                           <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            order.status === 'Teslim Edildi' ? 'bg-neon-green/20 text-neon-green' :
-                            order.status === 'Kargoda' ? 'bg-neon-blue/20 text-neon-blue' :
-                            'bg-neon-yellow/20 text-neon-yellow'
+                            order.status === 'Teslim Edildi' ? 'bg-green-500/20 text-green-500' :
+                            order.status === 'Kargoda' ? 'bg-blue-500/20 text-blue-500' :
+                            'bg-yellow-500/20 text-yellow-500'
                           }`}>
                             {order.status}
                           </div>
@@ -744,14 +758,14 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-6"
               >
-                <Card className="glass border-primary/20">
+                <Card className="glass border-orange-200 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-lg text-blue-400 font-semibold">KAZANCINIZ</CardTitle>
+                    <CardTitle className="text-lg text-orange-600 font-semibold">KAZANCINIZ</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground mb-2">
+                        <p className="text-sm text-gray-600 mb-2">
                           Toplam tutar ${paymentsData.minimumPayout} veya daha fazla ise aylık işleme alınır
                         </p>
                         <div className="w-full bg-gray-600 rounded-full h-4 border border-gray-500">
@@ -764,12 +778,12 @@ export default function Dashboard() {
                             }}
                           ></div>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-2">
+                        <p className="text-xs text-gray-600 mt-2">
                           Ödeme eşiğiniz %{Math.round((paymentsData.totalEarnings / paymentsData.minimumPayout) * 100)} kadarnla ulaştınız
                         </p>
                       </div>
                       <div className="text-right">
-                        <div className="text-3xl font-bold text-accent-green">
+                        <div className="text-3xl font-bold text-green-600">
                           ${paymentsData.totalEarnings.toFixed(2)}
                         </div>
                       </div>
@@ -782,13 +796,13 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 {/* Transactions */}
                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
-                  <Card className="glass border-primary/20">
+                  <Card className="glass border-orange-200 shadow-lg">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="text-sm font-medium text-blue-400">
+                        <CardTitle className="text-sm font-medium text-orange-600">
                           İŞLEMLER
                         </CardTitle>
-                        <CalendarDays className="w-4 h-4 text-primary-400" />
+                        <CalendarDays className="w-4 h-4 text-orange-500" />
                       </div>
                     </CardHeader>
                     <CardContent>
@@ -797,18 +811,18 @@ export default function Dashboard() {
                           variant="outline" 
                           size="sm"
                           onClick={handleDateRangeChange}
-                          className="text-muted-foreground border-primary/30"
+                          className="text-gray-600 border-orange-300"
                         >
                           <Calendar className="w-4 h-4 mr-2" />
                           {selectedDateRange}
                         </Button>
                       </div>
-                      <div className="text-2xl font-bold text-foreground mb-2">
+                      <div className="text-2xl font-bold text-gray-800 mb-2">
                         ${paymentsData.pendingPayments.toFixed(2)}
                       </div>
                       <Button 
                         variant="ghost" 
-                        className="text-muted-foreground p-0 h-auto hover:text-primary-400"
+                        className="text-gray-600 p-0 h-auto hover:text-orange-600"
                         onClick={() => handleViewDetails('İşlemler')}
                       >
                         Tüm İşlemler <ExternalLink className="w-3 h-3 ml-1" />
@@ -819,13 +833,13 @@ export default function Dashboard() {
 
                 {/* Payment Methods */}
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-                  <Card className="glass border-primary/20">
+                  <Card className="glass border-orange-200 shadow-lg">
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="text-sm font-medium text-blue-400">
+                        <CardTitle className="text-sm font-medium text-orange-600">
                           ÖDEME YÖNTEMLERİ
                         </CardTitle>
-                        <CreditCard className="w-4 h-4 text-accent-blue" />
+                        <CreditCard className="w-4 h-4 text-blue-500" />
                       </div>
                     </CardHeader>
                     <CardContent>
@@ -1012,18 +1026,28 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-6"
               >
-                <Card className="glass border-primary/20">
+                <Card className="glass border-orange-200 shadow-lg">
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg text-blue-400 font-semibold">TÜM SİPARİŞLER</CardTitle>
-                      <Button 
-                        variant="default"
-                        onClick={handleCreateOrder}
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Sipariş Oluştur
-                      </Button>
+                      <CardTitle className="text-lg text-orange-600 font-semibold">TÜM SİPARİŞLER</CardTitle>
+                      <div className="flex items-center space-x-4">
+                        <Button 
+                          variant="outline"
+                          onClick={handleExportData}
+                          className="border-orange-200 hover:bg-orange-50"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Dışa Aktar
+                        </Button>
+                        <Button 
+                          variant="default"
+                          onClick={handleCreateOrder}
+                          className="bg-orange-600 hover:bg-orange-700 text-white"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Sipariş Oluştur
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
                 </Card>
@@ -1036,66 +1060,70 @@ export default function Dashboard() {
                 transition={{ delay: 0.1 }}
                 className="mb-6"
               >
-                <Card className="glass border-primary/20">
+                <Card className="glass border-orange-200 shadow-lg">
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       {/* Sipariş Durumu */}
                       <div>
-                        <label className="block text-sm font-medium text-muted-foreground mb-2">
+                        <label className="block text-sm font-medium text-gray-600 mb-2">
                           Sipariş Durumu
                         </label>
                         <select 
-                          className="w-full p-2 bg-dark-800/50 border border-primary/20 rounded-lg text-foreground"
+                          className="w-full p-2 bg-white border border-orange-200 rounded-lg text-gray-800"
                           value={orderFilters.status}
                           onChange={(e) => handleOrderFilter('status', e.target.value)}
                         >
-                          {orderStatuses.map(status => (
-                            <option key={status} value={status}>{status}</option>
-                          ))}
+                          <option value="Tümü">Tümü</option>
+                          <option value="Teslim Edildi">Teslim Edildi</option>
+                          <option value="Kargoda">Kargoda</option>
+                          <option value="Bekliyor">Bekliyor</option>
                         </select>
                       </div>
 
                       {/* Alıcı E-Posta Adresi */}
                       <div>
-                        <label className="block text-sm font-medium text-muted-foreground mb-2">
+                        <label className="block text-sm font-medium text-gray-600 mb-2">
                           Alıcı E-Posta Adresi
                         </label>
                         <Input
                           placeholder="E-posta adresi ara..."
                           value={orderFilters.email}
                           onChange={(e) => setOrderFilters(prev => ({ ...prev, email: e.target.value }))}
+                          className="border-orange-200 focus:border-orange-500"
                         />
                       </div>
 
                       {/* Sipariş Tarihi */}
                       <div>
-                        <label className="block text-sm font-medium text-muted-foreground mb-2">
+                        <label className="block text-sm font-medium text-gray-600 mb-2">
                           Sipariş Tarihi
                         </label>
                         <select 
-                          className="w-full p-2 bg-dark-800/50 border border-primary/20 rounded-lg text-foreground"
+                          className="w-full p-2 bg-white border border-orange-200 rounded-lg text-gray-800"
                           value={orderFilters.dateRange}
                           onChange={(e) => handleOrderFilter('dateRange', e.target.value)}
                         >
-                          {dateRanges.map(range => (
-                            <option key={range} value={range}>{range}</option>
-                          ))}
+                          <option value="Son 30 gün">Son 30 gün</option>
+                          <option value="Son 7 gün">Son 7 gün</option>
+                          <option value="Son 3 ay">Son 3 ay</option>
+                          <option value="Tüm zamanlar">Tüm zamanlar</option>
                         </select>
                       </div>
 
                       {/* Sayfa Başına Veri */}
                       <div>
-                        <label className="block text-sm font-medium text-muted-foreground mb-2">
+                        <label className="block text-sm font-medium text-gray-600 mb-2">
                           Sayfa Başına Veri
                         </label>
                         <select 
-                          className="w-full p-2 bg-dark-800/50 border border-primary/20 rounded-lg text-foreground"
+                          className="w-full p-2 bg-white border border-orange-200 rounded-lg text-gray-800"
                           value={orderFilters.pageSize}
                           onChange={(e) => handleOrderFilter('pageSize', e.target.value)}
                         >
-                          {pageSizes.map(size => (
-                            <option key={size} value={size}>{size}</option>
-                          ))}
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
                         </select>
                       </div>
                     </div>
@@ -1103,44 +1131,104 @@ export default function Dashboard() {
                 </Card>
               </motion.div>
 
-              {/* Orders Table */}
+              {/* Orders List */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }} 
                 animate={{ opacity: 1, y: 0 }} 
                 transition={{ delay: 0.2 }}
               >
-                <Card className="glass border-primary/20">
+                <Card className="glass border-orange-200 shadow-lg">
                   <CardContent className="p-0">
                     {/* Table Headers */}
-                    <div className="grid grid-cols-6 gap-4 p-4 border-b border-primary/20 bg-dark-800/30">
-                      <div className="text-sm font-medium text-muted-foreground">Sipariş No</div>
-                      <div className="text-sm font-medium text-muted-foreground">Sipariş Detayları</div>
-                      <div className="text-sm font-medium text-muted-foreground">Sipariş Durumu</div>
-                      <div className="text-sm font-medium text-muted-foreground flex items-center">
+                    <div className="grid grid-cols-6 gap-4 p-4 border-b border-orange-200 bg-orange-50">
+                      <div className="text-sm font-medium text-gray-700">Sipariş No</div>
+                      <div className="text-sm font-medium text-gray-700">Sipariş Detayları</div>
+                      <div className="text-sm font-medium text-gray-700">Sipariş Durumu</div>
+                      <div className="text-sm font-medium text-gray-700 flex items-center">
                         Sipariş Tarihi
                         <ChevronRight className="w-4 h-4 ml-1 rotate-90" />
                       </div>
-                      <div className="text-sm font-medium text-muted-foreground">Sipariş Tutarı</div>
-                      <div className="text-sm font-medium text-muted-foreground">Net Komisyon</div>
+                      <div className="text-sm font-medium text-gray-700">Sipariş Tutarı</div>
+                      <div className="text-sm font-medium text-gray-700">Net Komisyon</div>
                     </div>
 
-                    {/* Empty State */}
-                    <div className="text-center py-16">
-                      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                        <ShoppingBag className="w-10 h-10 text-primary-400" />
-                      </div>
-                      <h3 className="text-lg font-medium text-foreground mb-2">Veri bulunmamaktadır.</h3>
-                      <p className="text-muted-foreground mb-6">
-                        Henüz herhangi bir sipariş bulunmuyor. İlk siparişinizi oluşturmak için yukarıdaki butonu kullanın.
+                    {/* Orders List */}
+                    <div className="divide-y divide-orange-200">
+                      {recentOrders.map((order, index) => (
+                        <motion.div
+                          key={order.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.3 + index * 0.1 }}
+                          className="grid grid-cols-6 gap-4 p-4 hover:bg-orange-50 transition-colors"
+                        >
+                          {/* Sipariş No */}
+                          <div>
+                            <button 
+                              onClick={() => router.push(`/orders/${order.id}`)}
+                              className="text-sm text-orange-600 hover:text-orange-700 transition-colors cursor-pointer font-medium"
+                            >
+                              #{order.id}
+                            </button>
+                          </div>
+
+                          {/* Sipariş Detayları */}
+                          <div>
+                            <h4 className="font-medium text-gray-800 text-sm">{order.product}</h4>
+                            <p className="text-xs text-gray-600">Amazon.com</p>
+                          </div>
+
+                          {/* Sipariş Durumu */}
+                          <div>
+                            <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                              order.status === 'Teslim Edildi' ? 'bg-green-100 text-green-700' :
+                              order.status === 'Kargoda' ? 'bg-blue-100 text-blue-700' :
+                              'bg-yellow-100 text-yellow-700'
+                            }`}>
+                              {order.status}
+                            </div>
+                          </div>
+
+                          {/* Sipariş Tarihi */}
+                          <div>
+                            <p className="text-sm text-gray-800">{order.date}</p>
+                          </div>
+
+                          {/* Sipariş Tutarı */}
+                          <div>
+                            <p className="text-sm font-medium text-gray-800">${order.amount}</p>
+                          </div>
+
+                          {/* Net Komisyon */}
+                          <div>
+                            <p className="text-sm font-medium text-green-600">${order.bonus}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    <div className="flex items-center justify-between p-4 border-t border-orange-200">
+                      <p className="text-sm text-gray-600">
+                        Toplam {recentOrders.length} sipariş gösteriliyor
                       </p>
-                      <Button 
-                        variant="outline"
-                        onClick={handleCreateOrder}
-                        className="border-primary/30 hover:bg-primary/5"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        İlk Siparişi Oluştur
-                      </Button>
+                      <div className="flex items-center space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="border-orange-200 hover:bg-orange-50"
+                        >
+                          Önceki
+                        </Button>
+                        <span className="text-sm text-gray-600">1</span>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="border-orange-200 hover:bg-orange-50"
+                        >
+                          Sonraki
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -1172,8 +1260,8 @@ export default function Dashboard() {
           )}
 
           {/* Footer */}
-          <footer className="mt-12 p-6 border-t border-primary/20">
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <footer className="mt-12 p-6 border-t border-orange-200">
+            <div className="flex items-center justify-between text-sm text-gray-600">
               <p>Copyright © 2025 AmazonBonus. Tüm hakları saklıdır.</p>
               <p className="flex items-center">
                 <Calendar className="w-4 h-4 mr-2" />
@@ -1197,24 +1285,24 @@ export default function Dashboard() {
         toastOptions={{
           duration: 3000,
           style: {
-            background: 'rgba(26, 26, 46, 0.95)',
-            color: '#f9fafb',
-            border: '1px solid rgba(168, 85, 247, 0.3)',
+            background: 'rgba(255, 255, 255, 0.95)',
+            color: '#374151',
+            border: '1px solid rgba(249, 115, 22, 0.3)',
             borderRadius: '8px',
             backdropFilter: 'blur(10px)',
           },
-          success: {
-            iconTheme: {
-              primary: '#059669',
-              secondary: '#f9fafb',
+                      success: {
+              iconTheme: {
+                primary: '#059669',
+                secondary: '#ffffff',
+              },
             },
-          },
-          error: {
-            iconTheme: {
-              primary: '#dc2626',
-              secondary: '#f9fafb',
+                      error: {
+              iconTheme: {
+                primary: '#dc2626',
+                secondary: '#ffffff',
+              },
             },
-          },
         }}
       />
     </div>

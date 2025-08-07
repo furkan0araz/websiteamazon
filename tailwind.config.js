@@ -17,19 +17,19 @@ module.exports = {
     },
     extend: {
       colors: {
-        // Daha Gerçekçi Mor Teması
+        // Beyaz-Turuncu Teması
         primary: {
-          50: '#faf5ff',
-          100: '#f3e8ff',
-          200: '#e9d5ff',
-          300: '#d8b4fe',
-          400: '#c084fc',
-          500: '#a855f7', // Ana mor - daha gerçekçi
-          600: '#9333ea',
-          700: '#7c2d12',
-          800: '#6b21a8',
-          900: '#581c87',
-          950: '#3b0764',
+          50: '#fff7ed',
+          100: '#ffedd5',
+          200: '#fed7aa',
+          300: '#fdba74',
+          400: '#fb923c',
+          500: '#f97316', // Ana turuncu
+          600: '#ea580c',
+          700: '#c2410c',
+          800: '#9a3412',
+          900: '#7c2d12',
+          950: '#431407',
         },
         accent: {
           blue: '#3b82f6',
@@ -39,18 +39,22 @@ module.exports = {
           yellow: '#d97706',
           pink: '#db2777',
         },
-        dark: {
-          950: '#0a0a0f',
-          900: '#0f0f1a',
-          800: '#1a1a2e',
-          700: '#16213e',
-          600: '#1e3a8a',
-          500: '#3b82f6',
+        light: {
+          50: '#ffffff',
+          100: '#fef7ed',
+          200: '#fef3e2',
+          300: '#fde68a',
+          400: '#fcd34d',
+          500: '#fbbf24',
+          600: '#f59e0b',
+          700: '#d97706',
+          800: '#b45309',
+          900: '#92400e',
         },
         glass: {
-          light: 'rgba(255, 255, 255, 0.05)',
-          medium: 'rgba(255, 255, 255, 0.1)',
-          heavy: 'rgba(255, 255, 255, 0.15)',
+          light: 'rgba(255, 255, 255, 0.8)',
+          medium: 'rgba(255, 255, 255, 0.9)',
+          heavy: 'rgba(255, 255, 255, 0.95)',
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -98,10 +102,10 @@ module.exports = {
         },
         "neon-pulse": {
           "0%, 100%": { 
-            boxShadow: "0 0 5px #8b5cf6, 0 0 10px #8b5cf6, 0 0 15px #8b5cf6",
+            boxShadow: "0 0 5px #f97316, 0 0 10px #f97316, 0 0 15px #f97316",
           },
           "50%": { 
-            boxShadow: "0 0 10px #8b5cf6, 0 0 20px #8b5cf6, 0 0 30px #8b5cf6",
+            boxShadow: "0 0 10px #f97316, 0 0 20px #f97316, 0 0 30px #f97316",
           },
         },
         "gradient-x": {
@@ -123,7 +127,7 @@ module.exports = {
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'neon-gradient': 'linear-gradient(45deg, #0f0f23, #1e1b4b, #312e81)',
+        'light-gradient': 'linear-gradient(135deg, #ffffff 0%, #fef7ed 50%, #fff7ed 100%)',
       }
     },
   },
